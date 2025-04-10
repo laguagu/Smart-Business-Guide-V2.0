@@ -1,34 +1,23 @@
 import logging
 import os
 import re
-import sys
 import warnings
 from typing import List
 
 import requests
-import spacy
 import streamlit as st
 from bs4 import BeautifulSoup
-from langchain import hub
-from langchain.chains import RetrievalQA
-from langchain.retrievers import ContextualCompressionRetriever
-from langchain.retrievers.document_compressors import FlashrankRerank
 from langchain_chroma import Chroma
-from langchain_community.document_loaders import (UnstructuredMarkdownLoader,
-                                                  WebBaseLoader)
-from langchain_community.tools.tavily_search import TavilySearchResults
+from langchain_community.document_loaders import UnstructuredMarkdownLoader
 from langchain_core.documents import Document
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.prompts import ChatPromptTemplate, PromptTemplate
 from langchain_groq.chat_models import ChatGroq
 from langchain_huggingface import HuggingFaceEmbeddings
-from langchain_ollama import ChatOllama, OllamaEmbeddings
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langgraph.graph import END, StateGraph
 from pydantic import BaseModel, Field
-from PyPDF2 import PdfReader
-from sentence_transformers import SentenceTransformer, util
 from tavily import TavilyClient
 from typing_extensions import TypedDict
 

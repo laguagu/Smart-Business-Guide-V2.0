@@ -1,0 +1,40 @@
+.git
+.gitignore
+.env
+.myenv
+.venv
+venv/
+ENV/
+__pycache__/
+*.py[cod]
+*$py.class
+.Python
+env/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+*.egg-info/
+.installed.cfg
+*.egg
+agentic_rag_with_tools.py
+
+# Exclude the Hugging Face vector store since we're only using OpenAI embeddings
+data/chroma_db_llamaparse-huggincface/
+
+# Exclude unnecessary image files (keep only what's needed)
+images/*
+!images/LOGO_UPBEAT.jpg
+
+# Exclude any large unnecessary files
+*.gz
+*.zip
+*.tar
+*.log

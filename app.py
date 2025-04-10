@@ -1,6 +1,13 @@
-__import__('pysqlite3')
-import sys
-sys.modules['sqlite3'] = sys.modules.pop('pysqlite3')
+# Try to use pysqlite3 if available (in Rahti environment), 
+# otherwise use the standard sqlite3 (in local development)
+try:
+    __import__('pysqlite3')
+    import sys
+    sys.modules['sqlite3'] = sys.modules.pop('pysqlite3')
+    print("Using pysqlite3 module instead of sqlite3 (Rahti compatible)")
+except ImportError:
+    print("pysqlite3 not found, using standard sqlite3 module (local development)")
+    
 import io
 import re
 import sys

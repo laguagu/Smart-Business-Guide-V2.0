@@ -1,0 +1,8 @@
+.myenv
+myenv
+secrets.toml
+.streamlit/secrets.toml
+__pycache__/*
+*/__pycache__/*/**/__pycache__/*.py[cod]*$py.class.env
+.env
+.env*
