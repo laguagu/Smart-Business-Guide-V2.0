@@ -1,5 +1,5 @@
 # Multi-stage build to minimize image size
-FROM python:3.11-slim AS builder
+FROM python:3.13-slim AS builder
 
 WORKDIR /app
 
@@ -17,12 +17,12 @@ RUN pip install --no-cache-dir -r requirements.txt
 RUN pip install pysqlite3-binary
 
 ### Final stage with minimal image
-FROM python:3.11-slim
+FROM python:3.13-slim
 
 WORKDIR /app
 
 # Copy installed packages from builder
-COPY --from=builder /usr/local/lib/python3.11/site-packages /usr/local/lib/python3.11/site-packages
+COPY --from=builder /usr/local/lib/python3.13/site-packages /usr/local/lib/python3.13/site-packages
 COPY --from=builder /usr/local/bin /usr/local/bin
 
 # Install minimal runtime dependencies
@@ -51,8 +51,7 @@ COPY data/chroma_db_llamaparse-openai/ /app/data/chroma_db_llamaparse-openai/
 
 # Create images directory and copy only the required logo
 RUN mkdir -p /app/images
-COPY images/LOGO_UPBEAT.jpg /app/images/
-
+COPY images/LOGO_UPBEAT.jpg images/estonia.jpg images/finland.png /app/images/
 # Expose Streamlit port
 EXPOSE 8501
 

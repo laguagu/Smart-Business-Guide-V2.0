@@ -9,6 +9,8 @@ cat > $TMP_SECRETS << EOF
 TAVILY_API_KEY = "${TAVILY_API_KEY}"
 GROQ_API_KEY = "${GROQ_API_KEY}"
 OPENAI_API_KEY = "${OPENAI_API_KEY}"
+USERNAME = "${USERNAME}"
+PASSWORD = "${PASSWORD}"
 EOF
 
 # Safely move the temp file to the destination

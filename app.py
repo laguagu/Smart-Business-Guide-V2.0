@@ -44,6 +44,51 @@ if "last_assistant" not in st.session_state:
 if "followup_questions" not in st.session_state:
     st.session_state.followup_questions = []
 
+# -------------------- Simple Authentication --------------------
+def check_password():
+    """Returns `True` if the user has entered the correct username and password."""
+    # Username and password hard-coded for simplicity
+    CORRECT_USERNAME = st.secrets["USERNAME"]
+    CORRECT_PASSWORD = st.secrets["PASSWORD"]
+    
+    # Initialize session_state
+    if "username" not in st.session_state:
+        st.session_state["username"] = ""
+    if "password" not in st.session_state:
+        st.session_state["password"] = ""
+    if "authenticated" not in st.session_state:
+        st.session_state["authenticated"] = False
+        
+    # If already authenticated, return True
+    if st.session_state["authenticated"]:
+        return True
+    
+    # Otherwise show login form
+    st.title("Smart Business Guide - Login")
+    
+    # Create login form
+    col1, col2 = st.columns([1, 1])
+    with col1:
+        username = st.text_input("Username", key="username_input")
+        password = st.text_input("Password", type="password", key="password_input")
+        
+        if st.button("Login"):
+            if username == CORRECT_USERNAME and password == CORRECT_PASSWORD:
+                st.session_state["authenticated"] = True
+                st.session_state["username"] = username
+                st.rerun()
+            else:
+                st.error("Incorrect username or password")
+                
+    with col2:
+        st.image("images/LOGO_UPBEAT.jpg", width=300)
+        
+    return False
+
+# Check authentication before showing app content
+if not check_password():
+    st.stop()  # Stop execution here if not authenticated
+
 # -------------------- Country Selection Screen --------------------
 # Show country selection if not already selected
 if st.session_state.selected_country is None:
@@ -436,11 +481,20 @@ with st.sidebar:
     # In the "Change Country" button section
     with col2:
         if st.button("🌍 Change Country", key="change_country", use_container_width=True):
-            # Reset ALL session state variables
+            # Reset only relevant session state variables, but keep authentication
+            authenticated_status = st.session_state["authenticated"]
+            username = st.session_state["username"]
+            
+            # Reset session state variables except authentication-related ones
             for key in list(st.session_state.keys()):
                 # Keep only minimal state needed to show the country selection screen
-                if key not in ["_is_running", "_script_run_ctx"]:
+                # and preserve authentication state
+                if key not in ["_is_running", "_script_run_ctx", "authenticated", "username", "password"]:
                     del st.session_state[key]
+            
+            # Restore authentication state
+            st.session_state["authenticated"] = authenticated_status
+            st.session_state["username"] = username
             
             # Set selected_country to None to show country selection screen
             st.session_state.selected_country = None

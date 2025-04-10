@@ -25,13 +25,9 @@ var/
 .installed.cfg
 *.egg
 agentic_rag_with_tools.py
-
+chroma_debug.py
 # Exclude the Hugging Face vector store since we're only using OpenAI embeddings
 data/chroma_db_llamaparse-huggincface/
-
-# Exclude unnecessary image files (keep only what's needed)
-images/*
-!images/LOGO_UPBEAT.jpg
 
 # Exclude any large unnecessary files
 *.gz

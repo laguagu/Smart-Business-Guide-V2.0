@@ -12,6 +12,13 @@ docker build -t smart-business-guide:latest .
 docker run -p 8501:8501 --env-file .env smart-business-guide:latest
 ```
 
+If error occurs `exec ./entrypoint.sh: no such file or directory`
+Possible fix command
+
+```bash
+docker run -it --rm --entrypoint sh smart-business-guide:latest -c "ls -la /app/"
+```
+
 Check the application at http://localhost:8501
 
 ## 3. Upload the Docker image to Rahti registry
@@ -46,6 +53,8 @@ docker push image-registry.apps.2.rahti.csc.fi/upbeat-apps/smart-business-guide:
    - `TAVILY_API_KEY`: Your Tavily API key
    - `GROQ_API_KEY`: Your Groq API key
    - `OPENAI_API_KEY`: Your OpenAI API key
+   - `USERNAME`: auth username
+   - `PASSWORD`: auth password
 7. Create the application by clicking "Create"
 
 ## 5. Check that the application works
