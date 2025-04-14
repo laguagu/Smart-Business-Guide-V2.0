@@ -70,132 +70,53 @@ collection_name = 'rag'
 CHUNK_SIZE = 3000
 CHUNK_OVERLAP = 200
 
-
-
 finland_rag_prompt = PromptTemplate(
     template=r"""<|begin_of_text|><|start_header_id|>system<|end_header_id|>
-                You are a helpful, highly accurate and trustworthy assistant. 
-                Your responses must strictly adhere to the provided context, answer style, and question's language using the follow rules:
+You are a precise, accurate assistant specializing in Finland business information. Follow these rules:
 
-                1. **Question and answer language**: 
-                - Detect the question's main language (e.g., English, Finnish, Russian, Estonian, Arabic, or other) and always answer in the same language. 
-                - **very important**: Make sure that your response is in the same language as the question's. 
+1. **Language Matching**: Always respond in the same language as the question (English, Finnish, Russian, Estonian, etc.)
 
-                2. If the context documents contain 'Internt search results' in 'page_content' field, always consider them in your response. 
-                - Do not create two separate sections if the context does not contain documents with two different 'page_content'
+2. **Context Adherence**: Base your answer solely on the provided context. If the context contains 'Internet search results', incorporate them.
 
-                3. **Context-Only Answers with a given answer style**:
-                - Always base your answers on the provided context and answer style.
-                - If the context explicitly states 'I apologize, but I'm designed to answer questions specifically related to business and entrepreneurship in Finland,' output this context verbatim.
-                - If the context explicity states 'No information from the documents found. Try internet search', output this context verbatim.
+3. **Answer Style**:
+   - "Concise": Brief, direct responses
+   - "Moderate": Balanced detail with some explanation
+   - "Explanatory": Comprehensive answers with examples
 
-                4. **Response style**:
-                - Address the query directly without unnecessary or speculative information.
-                - Do not draw from your knowledge base; strictly use the given context. However, take some liberty to provide more explanations and illustrations for better clarity and demonstration from your knowledge and experience only if answer style is "Moderate" or "Explanatory". 
-                5. **Answer style**
-                - if the context contains documents with two different 'page_content' with the names 'Smart guide results:' and 'Internet search results:', strictly follow the format for answer generation specified in rule 9: "hybrid context handling". In that case, create two distinct sections even for 'concise' answer style.
-                - If answer style = "Concise", generate a concise answer. But create the two sections as mentioned before if there are two different 'page_content'.
-                - If answer style = "Moderate", use a moderate approach to generate answer where you can provide a little bit more explanation and elaborate the answer to improve clarity, integrating your own experience. But create the two sections as mentioned before if there are two different 'page_content'.
-                - If answer style = "Explanatory", provide a detailed and elaborated answer in the question' language by providing more explanations with examples and illustrations to improve clarity in best possible way, integrating your own experience. However, the explanations, examples and illustrations should be strictly based on the context. 
-                6. **Conversational tone**
-                 - Maintain a conversational and helping style which should tend to guide the user and provide him help, hints and offers to further help and information. 
-                 - Use simple language. Explain difficult concepts or terms wherever needed. Present the information in the best readable form.
+4. **Citations**:
+   - For Smart guide results: Include citations as [document_name, page xx]
+   - For Internet search results: Include hyperlinked URLs with website names
+   - Never invent citations or URLs
 
-                7. **Formatting Guidelines**:
-                - Use bullet points for lists.
-                - Include line breaks between sections for clarity.
-                - Highlight important numbers, dates, and terms using **bold** formatting.
-                - Create tables wherever appropriate to present data clearly.
-                - If there are discrepancies in the context, clearly explain them.
+5. **Hybrid Content Handling**:
+   If and only if the 'page_content' field in the context contains both "Smart guide results: " and "Internet search results: ", create two clearly separated sections, regardless of answer style.
+   - **Smart guide results**: Information with proper citations
+   - **Internet search results**: Web information with linked sources
 
-                8. **Citation Rules**:
-                - **very important**: Include citations in the answer at all relevant places if they are present in the context. Under no circumstances ignore them. 
-                - For responses based on the context documents containing 'page_content' field of 'Smart guide results:', cite the document name and page number with each piece of information in the format: [document_name, page xx].
-                - For responses based on the documents containing the 'page_content' field of 'Internet search results:', include all the URLs in hyperlink form returned by the websearch. **very important**: The URLs should be labelled with the website name. 
-                - Do not invent any citation or URL. Only use the citation or URL in the context. 
+6. **Error Handling**:
+   - If context explicitly states "I apologize, but I'm designed to answer questions specifically related to business and entrepreneurship in Finland," repeat this verbatim
+   - If context states "No information from the documents found.," repeat this verbatim
 
-                9. **Hybrid Context Handling**:
-                - If and only if the context contains documents with two different 'page_content' with the names 'Smart guide results:' and 'Internet search results:', structure your response in corresponding sections with the following headings:
-                    - **Smart guide results**: Include data from 'Smart guide results' and its citations in the format: [document_name, page xx]. If the 'Smart guide results' do not contain any information relevant to the question, output 'No information found' in this section.
-                    - **Internet search results**: Include data from 'Internet search results' and its citations (URLs). 
-                    - Ensure that you create two separate sections if and only if the context contain documents with two different 'page_content': 'Smart guide results:' and 'Internet search results:'.
-                    - Do not create two different sections or mention 'Smart guide results:' or 'Internet search results:' in your response if the context does not contain documents with two different 'page_content': 'Smart guide results:' and 'Internet search results:'.
-                    - Always include the document with 'page_content' of 'Internet search results:' in your response.
-                    - If answer style = "Explanatory", both the sections should be detailed and should contain all the points relevant to the question.
-                10. **Integrity and Trustworthiness**:
-                - Ensure every part of your response complies with these rules.
+7. **Formatting**:
+   - Use bullet points for lists
+   - Bold important information
+   - Create tables when appropriate
+   - Use line breaks between sections
 
-                <|eot_id|><|start_header_id|>user<|end_header_id|>
-                Question: {question} 
-                Context: {context} 
-                Answer style: {answer_style}
-                Answer: <|eot_id|><|start_header_id|>assistant<|end_header_id|>""",
+8. **Conversational Style**:
+   - Maintain a helpful, guiding tone
+   - Reference conversation history when relevant
+   - Use clear, accessible language
+
+Never add information beyond the context, except for clarifying explanations in Moderate or Explanatory styles that enhance the context without adding new facts.
+
+<|eot_id|><|start_header_id|>user<|end_header_id|>
+Question: {question} 
+Context: {context} 
+Answer style: {answer_style}
+Answer: <|eot_id|><|start_header_id|>assistant<|end_header_id|>""",
     input_variables=["question", "context", "answer_style"]
-
 )
-
-# # Define country-specific prompts
-# finland_rag_prompt = PromptTemplate(
-#     template=r"""<|begin_of_text|><|start_header_id|>system<|end_header_id|>
-#                 You are a helpful, highly accurate and trustworthy assistant. 
-#                 Your responses must strictly adhere to the provided context, answer style, and question's language using the follow rules:
-
-#                 1. **Question and answer language**: 
-#                 - Detect the question's main language (e.g., English, Finnish, Russian, Estonian, Arabic, or other) and always answer in the same language. If a question has english words and the words from some other language which doesn't have the same letters as English, the answer should be in other language.
-#                 - **very important**: Make sure that your response is in the same language as the question's. 
-
-#                 2. If the search mode is True and the context documents contain 'Internt search results' in 'page_content' field, always consider them in your response. 
-
-#                 3. **Context-Only Answers with a given answer style**:
-#                 - Always base your answers on the provided context and answer style.
-#                 - If the context explicitly states 'I apologize, but I'm designed to answer questions specifically related to business and entrepreneurship in Finland,' output this context verbatim.
-#                 - If the context explicity states 'No information from the documents found. Try internet search', output this context verbatim.
-
-#                 4. **Response style**:
-#                 - Address the query directly without unnecessary or speculative information.
-#                 - Do not draw from your knowledge base; strictly use the given context. However, take some liberty to provide more explanations and illustrations for better clarity and demonstration from your knowledge and experience only if answer style is "Moderate" or "Explanatory". 
-#                 5. **Answer style**
-#                 - if the context contains documents with two different 'page_content' with the names 'Smart guide results:' and 'Internet search results:', strictly follow the format for answer generation specified in rule 9: "hybrid context handling". In that case, create two distinct sections even for 'concise' answer style.
-#                 - If answer style = "Concise", generate a concise answer, but consider generating the answer from whatever information you can find in the context. Create the two sections as mentioned before if search mode is True.
-#                 - If answer style = "Moderate", use a moderate approach to generate answer where you can provide a little bit more explanation and elaborate the answer to improve clarity, integrating your own experience. Create the two sections as mentioned before if search mode is True.
-#                 - If answer style = "Explanatory", provide a detailed and elaborated answer in the question' language by providing more explanations with examples and illustrations to improve clarity in best possible way, integrating your own experience. However, the explanations, examples and illustrations should be strictly based on the context. 
-#                 6. **Conversational tone**
-#                  - Maintain a conversational and helping style which should tend to guide the user and provide him help, hints and offers to further help and information. 
-#                  - Use simple language. Explain difficult concepts or terms wherever needed. Present the information in the best readable form.
-
-#                 7. **Formatting Guidelines**:
-#                 - Use bullet points for lists.
-#                 - create relevant icons, emojis, and other visual elements as required.
-#                 - Include line breaks between sections for clarity.
-#                 - Highlight important numbers, dates, and terms using **bold** formatting.
-#                 - Create tables wherever appropriate to present data clearly.
-#                 - If there are discrepancies in the context, clearly explain them.
-
-#                 8. **Citation Rules**:
-#                 - **very important**: Include citations in the answer at all relevant places if they are present in the context. Under no circumstances ignore them. 
-#                 - For responses based on the context documents containing 'page_content' field of 'Smart guide results:', cite the document name and page number with each piece of information in the format: [document_name, page xx].
-#                 - For responses based on the documents containing the 'page_content' field of 'Internet search results:', include all the URLs in hyperlink form returned by the websearch. **very important**: The URLs should be labelled with the website name. 
-#                 - Do not invent any citation or URL. Only use the citation or URL in the context. 
-
-#                 9. **Hybrid Context Handling**:
-#                 - If and only if search mode is True, structure your response in corresponding sections with the following headings:
-#                     - **Smart guide results**: Include data from 'Smart guide results' and its citations in the format: [document_name, page xx]. If the 'Smart guide results' do not contain any information relevant to the question, output 'No information found' in this section.
-#                     - **Internet search results**: Include data from 'Internet search results' and its citations (URLs). 
-#                     - Ensure that you create two separate sections if and only if the context contain documents with two different 'page_content': 'Smart guide results:' and 'Internet search results:'.
-#                     - Do not create two different sections or mention 'Smart guide results:' or 'Internet search results:' in your response if search mode is False.
-#                     - Always include the document with 'page_content' of 'Internet search results:' in your response.
-#                     - If answer style = "Explanatory", both the sections should be detailed and should contain all the points relevant to the question.
-#                 10. **Integrity and Trustworthiness**:
-#                 - Ensure every part of your response complies with these rules.
-
-#                 <|eot_id|><|start_header_id|>user<|end_header_id|>
-#                 Question: {question} 
-#                 Context: {context} 
-#                 Answer style: {answer_style}
-#                 search mode: search_mode
-#                 Answer: <|eot_id|><|start_header_id|>assistant<|end_header_id|>""",
-#     input_variables=["question", "context", "answer_style", "search_mode"]
-# )
 
 estonia_rag_prompt = PromptTemplate(
     template=r"""<|begin_of_text|><|start_header_id|>system<|end_header_id|>
@@ -588,9 +509,12 @@ def grade_documents(state):
                 filtered_docs.append(doc)
         except Exception as e:
             print(f"Error grading document chunk {count}: {e}")
-            
+
     if not filtered_docs:
-        filtered_docs.append('No information from the documents found. Try internet search')
+        # Create a proper Document object for the error message
+        error_doc = Document(page_content="No information from the documents found.")
+        filtered_docs = [error_doc]
+
     web_search_needed = "No"        
     return {"documents": filtered_docs, "question": question, "web_search_needed": web_search_needed}
 
@@ -700,18 +624,69 @@ def handle_unrelated(state):
     return {"generation": response, "documents": documents, "question": question}
 
 
+
+
+def grade_retriever_hybrid(vector_docs, question):
+    """
+    Grade only vector documents during hybrid search.
+    
+    Parameters:
+    - vector_docs: Document list from retriever
+    - question: User question
+    
+    Returns:
+    - filtered_vector_docs: List of relevant documents (or error message document)
+    """
+    filtered_docs = []
+
+    if not vector_docs:
+        print("No vector documents available for grading in hybrid search.")
+        # Create error document specifically for Smart guide results
+        error_doc = Document(page_content="No information from the documents found.")
+        return [error_doc]
+
+    print(f"Grading vector documents with {st.session_state.grader_llm.model_name} for hybrid search")
+
+    for count, doc in enumerate(vector_docs):
+        try:
+            # Evaluate document relevance
+            score = st.session_state.doc_grader.invoke(
+                {"documents": [doc], "question": question})
+            print(f"Vector chunk {count} relevance: {score}")
+            if score.binary_score == "Yes":
+                filtered_docs.append(doc)
+        except Exception as e:
+            print(f"Error grading vector document chunk {count}: {e}")
+            
+    if not filtered_docs:
+        # Create a proper Document object for the error message
+        error_doc = Document(page_content="No information from the documents found.")
+        filtered_docs = [error_doc]
+        print("No relevant vector documents found in hybrid search.")
+    else:
+        print(f"Found {len(filtered_docs)} relevant vector documents in hybrid search.")
+        
+    return filtered_docs
+
+    
 def hybrid_search(state):
     question = state["question"]
     print("Invoking hybrid search...")
     
     # For Finland, do hybrid search
     vector_docs = st.session_state.retriever.invoke(question)
-    web_docs = web_search({"question": question})["documents"]
-
+    
+    # Grade the vector documents
+    filtered_vector_docs = grade_retriever_hybrid(vector_docs, question)
+    
     # Add headings to distinguish between vector and web search results
     vector_results = [Document(
-        page_content="Smart guide results:" + doc.page_content) for doc in vector_docs]
+        page_content="Smart guide results: " + doc.page_content) for doc in filtered_vector_docs]
 
+    
+    # Proceed with web search
+    web_docs = web_search({"question": question})["documents"]
+    
     # Check if any web_docs already contain "Internet search results:"
     web_results_contain_header = any(
         "Internet search results:" in doc.page_content for doc in web_docs)
@@ -724,6 +699,7 @@ def hybrid_search(state):
     else:
         web_results = web_docs  # Keep web_docs unchanged if they already contain the header
 
+    # Combine the filtered vector results with web results
     combined_docs = vector_results + web_results
     return {"documents": combined_docs, "question": question}
 
@@ -732,7 +708,7 @@ def web_search(state):
     if "tavily_client" not in st.session_state:
         st.session_state.tavily_client = TavilyClient()
     question = state["question"]
-    question = re.sub(r'\b\w+\\|Internet search\b', '', question).strip()
+    # question = re.sub(r'\b\w+\\|Internet search\b', '', question).strip()
     
     # Add country-specific suffix to the question
     if st.session_state.selected_country == "Estonia":
@@ -793,7 +769,15 @@ def web_search(state):
                 "finlex.fi",
                 "te-palvelut.fi",
                 "tilastokeskus.fi",
-                "veronmaksajat.fi"
+                "veronmaksajat.fi",
+                "hel.fi",
+                "ukko.fi",
+                "yrityssalo.fi",
+                "stm.fi",
+                "eurofound.europa.eu",
+                "oph.fi",
+                "oikeusrekisterikeskus.fi"
+
             ]
 
         search_result = st.session_state.tavily_client.get_search_context(
@@ -808,7 +792,7 @@ def web_search(state):
         if isinstance(search_result, str):
             web_results = search_result
         elif isinstance(search_result, dict) and "documents" in search_result:
-            web_results = "Internet search results:".join(
+            web_results = "Internet search results: ".join(
                 [doc.get("content", "") for doc in search_result["documents"]])
         else:
             web_results = "No valid results returned by TavilyClient."
@@ -821,6 +805,234 @@ def web_search(state):
     return {"documents": documents, "question": question}
 
     
+# # Router function
+# def route_question(state):
+#     question = state["question"]    
+#     hybrid_search_enabled = state.get("hybrid_search", False)
+#     internet_search_enabled = state.get("internet_search", False)
+    
+#     # Define the business topics for relevance checking
+#     country = st.session_state.selected_country
+
+#     business_topics = (
+#     # Tax and finance related
+#     f"tax rate, taxation rules, taxable incomes, tax exemptions, tax filing process, VAT, "
+#     f"corporate tax, personal income tax, dividend taxation, capital gains tax, "
+#     f"accounting requirements, financial reporting, bookkeeping, invoicing, "
+#     f"business bank accounts, merchant accounts, payment processing, "
+    
+#     # Immigration and legal status
+#     f"immigration process, visa requirements, residence permits, work permits, "
+#     f"immigration authority, citizenship, permanent residency, "
+#     f"e-residency, digital nomad visas, family reunification, "
+    
+#     # Business formation and structure
+#     f"company registration, business registration, legal entity types, "
+#     f"sole proprietorship, partnership, limited liability company, corporation, "
+#     f"business name registration, articles of association, "
+#     f"shareholders agreement, ownership structure, share capital, "
+#     f"business licensing, permits, authorizations required for business operation, "
+    
+#     # Business operations
+#     f"business planning, business strategy, market analysis, "
+#     f"business model canvas, revenue models, pricing strategies, "
+#     f"supply chain management, procurement, inventory management, "
+#     f"logistics, import and export procedures, customs regulations, "
+#     f"international trade, trade agreements, sanctions, "
+    
+#     # Entrepreneurship and funding
+#     f"startups, entrepreneurship, business incubators, accelerators, "
+#     f"venture capital, angel investing, seed funding, business loans, "
+#     f"crowdfunding, grants, government subsidies, business incentives, "
+#     f"business pitching, valuation, exit strategies, "
+    
+#     # Employment and HR
+#     f"employment law, hiring employees, recruiting, job contracts, "
+#     f"labor regulations, minimum wage, working hours, "
+#     f"employee benefits, health insurance, sick leave, "
+#     f"parental leave, annual leave, vacation policies, "
+#     f"unemployment benefits, pensions, retirement, "
+#     f"remote work regulations, hybrid work, "
+#     f"employee stock options, profit sharing, "
+    
+#     # Intellectual property and data
+#     f"intellectual property, patents, trademarks, copyrights, "
+#     f"data protection, GDPR compliance, privacy regulations, "
+#     f"cybersecurity requirements, digital signatures, "
+    
+#     # Business compliance
+#     f"regulatory compliance, industry-specific regulations, "
+#     f"health and safety requirements, environmental regulations, "
+#     f"consumer protection laws, competition law, "
+#     f"anti-corruption laws, KYC requirements, AML regulations, "
+    
+#     # Business services and infrastructure
+#     f"business premises, commercial property, office space, "
+#     f"coworking spaces, business addresses, virtual offices, "
+#     f"utilities, telecommunications, internet services, "
+#     f"business insurance, liability insurance, property insurance, "
+#     f"Recommendations and tips from local advisers, “how to” (business acumen)"
+    
+#     # Business support and networking
+#     f"chambers of commerce, business associations, industry groups, "
+#     f"business networking, mentorship programs, business advisors, "
+#     f"business coaching, consultant services, business consultancy"
+    
+#     # Business closure and restructuring
+#     f"business dissolution, bankruptcy process, insolvency, "
+#     f"business restructuring, mergers, acquisitions, "
+#     f"business succession planning, business valuation, "
+#     f"Market information, Internationalization of business e.g. international markets, "
+#     f"investment opportunities, how to invest?"
+# )
+
+#     tool_selection = {
+#         "retrieve": (
+#             f"Questions related to business, startups, and practical aspects of operating in {country}, including but not limited to: "
+#             f"• ANY aspect of starting, running, managing, or closing businesses "
+#             f"• Questions that COULD be asked by someone interested in entrepreneurship "
+#             f"• Topics that entrepreneurs or business people commonly need to know "
+#             f"• Anything involving economic activities, work, income, or finances "
+#             f"• Practical aspects of living, working, or operating in {country} "
+#             f"• Topics with implicit (not just explicit) connections to business "
+#             f"• Business planning, strategy, and market analysis "
+#             f"• Business opportunities, potential ventures, and market gaps "
+#             f"• Tax systems, taxation rules, and filing procedures "
+#             f"• Immigration processes, visa requirements, and residency options "
+#             f"• Company registration, business structures, and legal entities "
+#             f"• Licensing, permits, and regulatory compliance requirements "
+#             f"• Employment laws, hiring practices, and workplace regulations "
+#             f"• Social benefits, insurance systems, and safety nets "
+#             f"• Industry insights, sector analysis, and market trends "
+#             f"• Import/export procedures, international trade, and customs "
+#             f"• Business financing, investment options, and funding sources "
+#             f"• Business infrastructure, services, and support networks "
+#             f"• Business culture, practices, and communication norms "
+#             f"• Questions about specific business opportunities for particular expertise, areas, or sectors "
+#             f"• Requests for suggestions, advice, or guidance related to business activities "
+#             f"• Any question that could reasonably have a business or entrepreneurship angle, even if uncertain"
+#             f"• Questions related to startups, leading startups, successful startups, and related topics."
+#         ),
+#         "unrelated": (
+#             f"Questions not related to business, entrepreneurship, startups, employment, unemployment, pensions, insurance, social benefits, or similar topics, "
+#             f"or those related to other countries or cities instead of Finland, or those related to other countries or cities instead of {country}."
+#         )
+#     }
+
+#     business_relevance_prompt = ChatPromptTemplate.from_messages([
+#         ("system", f"""You are evaluating whether questions are broadly related to business, entrepreneurship, or economic activities.
+
+#         Your task is to determine if a question has ANY connection to business or entrepreneurship topics, even if indirect or implied.
+
+#         Use an INCLUSIVE approach:
+#         - Say 'yes' if the question relates to ANY aspect of starting, running, managing, or closing businesses or startups
+#         - Say 'yes' if the question COULD be asked by someone interested in entrepreneurship
+#         - Say 'yes' if the question relates to topics that entrepreneurs or business people commonly need to know
+#         - Say 'yes' if the question involves economic activities, work, income, or finances
+#         - Say 'yes' if the question is about living, working, or operating in a country from a practical standpoint
+#         - Say 'yes' even if the business connection is implicit rather than explicit
+#         - Say 'yes' if you're uncertain but the question could reasonably have a business angle
+
+#         Only say 'no' if the question is CLEARLY unrelated to business, entrepreneurship, economics, work, or practical aspects of living in a country.
+
+#         Here are example topics that should be considered business-related (this is NOT an exhaustive list):
+#         {business_topics}
+
+#         Answer ONLY with 'yes' or 'no'.
+#         """),
+#             ("human", "Question: {question}")
+#         ])
+    
+#     country_relevance_prompt = ChatPromptTemplate.from_messages([
+#         ("system", f"Determine if the question is explicitly about a country OTHER THAN {country} or a city that is NOT in {country}. If no country is explicitly mentioned, the question is about {country}. Answer only 'yes' or 'no'."),
+#         ("human", "Question: {question}")
+#     ])
+    
+#     # Function to check business topic relevance
+#     def is_business_related(q):
+#         try:
+#             result = (business_relevance_prompt | st.session_state.router_llm | StrOutputParser()).invoke({"question": q})
+#             return "yes" in result.lower()
+#         except Exception as e:
+#             print(f"Error in business relevance check: {e}")
+#             # Default to True in case of error
+#             return True
+    
+#     # Function to check if question is about a different country/city
+#     def is_wrong_country(q):
+#         try:
+#             result = (country_relevance_prompt | st.session_state.router_llm | StrOutputParser()).invoke({"question": q})
+#             return "yes" in result.lower()
+#         except Exception as e:
+#             print(f"Error in country relevance check: {e}")
+#             # Default to False in case of error
+#             return False
+    
+#     # Check both conditions separately
+#     business_related = is_business_related(question)
+#     different_country = is_wrong_country(question)
+    
+#     # If question is about a different country, mark as unrelated
+#     if different_country:
+#         print(f"Question is about a different country than {country}, marking as unrelated")
+#         return "unrelated"
+    
+#     # If question is not business-related, mark as unrelated
+#     if not business_related:
+#         print(f"Question is not related to business topics, marking as unrelated")
+#         return "unrelated"
+    
+#     # Now we know the question is business-related and not about a different country
+#     # For Estonia, always use web search for relevant questions
+#     if st.session_state.selected_country == "Estonia":
+#         return "websearch"
+
+#     # For Finland with hybrid or internet search enabled
+#     if st.session_state.selected_country == "Finland":
+#         if hybrid_search_enabled:
+#             return "hybrid_search"
+        
+#         if internet_search_enabled:
+#             return "websearch"
+    
+#     # For Finland with document search only, use more detailed routing
+#     SYS_PROMPT = f"""Act as a router to select specific tools or functions based on user's question. 
+#                  - Analyze the given question and use the given tool selection dictionary to output the name of the relevant tool based on its description and relevancy with the question. 
+#                    The dictionary has tool names as keys and their descriptions as values. 
+#                  - Output only and only tool name, i.e., the exact key and nothing else with no explanations at all. 
+#                  - For questions mentioning any other country except {country}, or any other city except a city in {country}, output 'unrelated'.
+#                 """
+
+#     # Define the ChatPromptTemplate for detailed routing
+#     prompt = ChatPromptTemplate.from_messages(
+#         [
+#             ("system", SYS_PROMPT),
+#             ("human", """Here is the question:
+#                         {question}
+#                         Here is the tool selection dictionary:
+#                         {tool_selection}
+#                         Output the required tool.
+#                     """),
+#         ]
+#     )
+
+#     # Pass the inputs to the prompt
+#     inputs = {
+#         "question": question,
+#         "tool_selection": tool_selection
+#     }
+
+#     # Invoke the chain
+#     tool = (prompt | st.session_state.router_llm | StrOutputParser()).invoke(inputs)
+#     # Remove backslashes and extra spaces
+#     tool = re.sub(r"[\\'\"`]", "", tool.strip())
+    
+#     if "unrelated" not in tool:
+#         print(f"Invoking {tool} tool through {st.session_state.router_llm.model_name}")
+#     if "websearch" in tool:
+#         print("I need to get recent information from this query.")
+    
+#     return tool
 
 
 # Router function
@@ -829,109 +1041,81 @@ def route_question(state):
     hybrid_search_enabled = state.get("hybrid_search", False)
     internet_search_enabled = state.get("internet_search", False)
     
-    # Define the business topics for relevance checking
     country = st.session_state.selected_country
 
+    # Merged business topics and tool selection criteria
     business_topics = (
-    # Tax and finance related
-    f"tax rate, taxation rules, taxable incomes, tax exemptions, tax filing process, VAT, "
-    f"corporate tax, personal income tax, dividend taxation, capital gains tax, "
-    f"accounting requirements, financial reporting, bookkeeping, invoicing, "
-    f"business bank accounts, merchant accounts, payment processing, "
-    
-    # Immigration and legal status
-    f"immigration process, visa requirements, residence permits, work permits, "
-    f"immigration authority, citizenship, permanent residency, "
-    f"e-residency, digital nomad visas, family reunification, "
-    
-    # Business formation and structure
-    f"company registration, business registration, legal entity types, "
-    f"sole proprietorship, partnership, limited liability company, corporation, "
-    f"business name registration, articles of association, "
-    f"shareholders agreement, ownership structure, share capital, "
-    f"business licensing, permits, authorizations required for business operation, "
-    
-    # Business operations
-    f"business planning, business strategy, market analysis, "
-    f"business model canvas, revenue models, pricing strategies, "
-    f"supply chain management, procurement, inventory management, "
-    f"logistics, import and export procedures, customs regulations, "
-    f"international trade, trade agreements, sanctions, "
-    
-    # Entrepreneurship and funding
-    f"startups, entrepreneurship, business incubators, accelerators, "
-    f"venture capital, angel investing, seed funding, business loans, "
-    f"crowdfunding, grants, government subsidies, business incentives, "
-    f"business pitching, valuation, exit strategies, "
-    
-    # Employment and HR
-    f"employment law, hiring employees, recruiting, job contracts, "
-    f"labor regulations, minimum wage, working hours, "
-    f"employee benefits, health insurance, sick leave, "
-    f"parental leave, annual leave, vacation policies, "
-    f"unemployment benefits, pensions, retirement, "
-    f"remote work regulations, hybrid work, "
-    f"employee stock options, profit sharing, "
-    
-    # Intellectual property and data
-    f"intellectual property, patents, trademarks, copyrights, "
-    f"data protection, GDPR compliance, privacy regulations, "
-    f"cybersecurity requirements, digital signatures, "
-    
-    # Business compliance
-    f"regulatory compliance, industry-specific regulations, "
-    f"health and safety requirements, environmental regulations, "
-    f"consumer protection laws, competition law, "
-    f"anti-corruption laws, KYC requirements, AML regulations, "
-    
-    # Business services and infrastructure
-    f"business premises, commercial property, office space, "
-    f"coworking spaces, business addresses, virtual offices, "
-    f"utilities, telecommunications, internet services, "
-    f"business insurance, liability insurance, property insurance, "
-    
-    # Business support and networking
-    f"chambers of commerce, business associations, industry groups, "
-    f"business networking, mentorship programs, business advisors, "
-    f"business coaching, consultant services, business consultancy"
-    
-    # Business closure and restructuring
-    f"business dissolution, bankruptcy process, insolvency, "
-    f"business restructuring, mergers, acquisitions, "
-    f"business succession planning, business valuation"
-)
-
-    tool_selection = {
-        "retrieve": (
-            f"Questions related to business and practical aspects of operating in {country}, including but not limited to: "
-            f"• ANY aspect of starting, running, managing, or closing businesses "
-            f"• Questions that COULD be asked by someone interested in entrepreneurship "
-            f"• Topics that entrepreneurs or business people commonly need to know "
-            f"• Anything involving economic activities, work, income, or finances "
-            f"• Practical aspects of living, working, or operating in {country} "
-            f"• Topics with implicit (not just explicit) connections to business "
-            f"• Business planning, strategy, and market analysis "
-            f"• Business opportunities, potential ventures, and market gaps "
-            f"• Tax systems, taxation rules, and filing procedures "
-            f"• Immigration processes, visa requirements, and residency options "
-            f"• Company registration, business structures, and legal entities "
-            f"• Licensing, permits, and regulatory compliance requirements "
-            f"• Employment laws, hiring practices, and workplace regulations "
-            f"• Social benefits, insurance systems, and safety nets "
-            f"• Industry insights, sector analysis, and market trends "
-            f"• Import/export procedures, international trade, and customs "
-            f"• Business financing, investment options, and funding sources "
-            f"• Business infrastructure, services, and support networks "
-            f"• Business culture, practices, and communication norms "
-            f"• Questions about specific business opportunities for particular expertise, areas, or sectors "
-            f"• Requests for suggestions, advice, or guidance related to business activities "
-            f"• Any question that could reasonably have a business or entrepreneurship angle, even if uncertain"
-        ),
-        "unrelated": (
-            f"Questions not related to business, entrepreneurship, startups, employment, unemployment, pensions, insurance, social benefits, or similar topics, "
-            f"or those related to other countries or cities instead of Finland, or those related to other countries or cities instead of {country}."
-        )
-    }
+        f"Questions related to business, startups, and practical aspects of operating in {country}, including but not limited to: "
+        # Tax and finance related
+        f"\n• Tax rate, taxation rules, taxable incomes, tax exemptions, tax filing process, VAT, "
+        f"corporate tax, personal income tax, dividend taxation, capital gains tax, "
+        f"accounting requirements, financial reporting, bookkeeping, invoicing, "
+        f"business bank accounts, merchant accounts, payment processing"
+        
+        # Immigration and legal status
+        f"\n• Immigration process, visa requirements, residence permits, work permits, "
+        f"immigration authority, citizenship, permanent residency, "
+        f"e-residency, digital nomad visas, family reunification"
+        
+        # Business formation and structure
+        f"\n• Company registration, business registration, legal entity types, "
+        f"sole proprietorship, partnership, limited liability company, corporation, "
+        f"business name registration, articles of association, "
+        f"shareholders agreement, ownership structure, share capital, "
+        f"business licensing, permits, authorizations required for business operation"
+        
+        # Business operations
+        f"\n• Business planning, business strategy, market analysis, "
+        f"business model canvas, revenue models, pricing strategies, "
+        f"supply chain management, procurement, inventory management, "
+        f"logistics, import and export procedures, customs regulations, "
+        f"international trade, trade agreements, sanctions"
+        
+        # Entrepreneurship and funding
+        f"\n• Startups, entrepreneurship, business incubators, accelerators, "
+        f"venture capital, angel investing, seed funding, business loans, "
+        f"crowdfunding, grants, government subsidies, business incentives, "
+        f"business pitching, valuation, exit strategies"
+        
+        # Employment and HR
+        f"\n• Employment law, hiring employees, recruiting, job contracts, "
+        f"labor regulations, minimum wage, working hours, "
+        f"employee benefits, health insurance, sick leave, "
+        f"parental leave, annual leave, vacation policies, "
+        f"unemployment benefits, pensions, retirement, "
+        f"remote work regulations, hybrid work, "
+        f"employee stock options, profit sharing"
+        
+        # Intellectual property and data
+        f"\n• Intellectual property, patents, trademarks, copyrights, "
+        f"data protection, GDPR compliance, privacy regulations, "
+        f"cybersecurity requirements, digital signatures"
+        
+        # Business compliance
+        f"\n• Regulatory compliance, industry-specific regulations, "
+        f"health and safety requirements, environmental regulations, "
+        f"consumer protection laws, competition law, "
+        f"anti-corruption laws, KYC requirements, AML regulations"
+        
+        # Business services and infrastructure
+        f"\n• Business premises, commercial property, office space, "
+        f"coworking spaces, business addresses, virtual offices, "
+        f"utilities, telecommunications, internet services, "
+        f"business insurance, liability insurance, property insurance, "
+        f"recommendations and tips from local advisers, business acumen"
+        
+        # Business support and networking
+        f"\n• Chambers of commerce, business associations, industry groups, "
+        f"business networking, mentorship programs, business advisors, "
+        f"business coaching, consultant services, business consultancy"
+        
+        # Business closure and restructuring
+        f"\n• Business dissolution, bankruptcy process, insolvency, "
+        f"business restructuring, mergers, acquisitions, "
+        f"business succession planning, business valuation, "
+        f"market information, internationalization of business, "
+        f"investment opportunities, how to invest"
+    )
 
     business_relevance_prompt = ChatPromptTemplate.from_messages([
         ("system", f"""You are evaluating whether questions are broadly related to business, entrepreneurship, or economic activities.
@@ -939,7 +1123,7 @@ def route_question(state):
         Your task is to determine if a question has ANY connection to business or entrepreneurship topics, even if indirect or implied.
 
         Use an INCLUSIVE approach:
-        - Say 'yes' if the question relates to ANY aspect of starting, running, managing, or closing businesses
+        - Say 'yes' if the question relates to ANY aspect of starting, running, managing, or closing businesses or startups
         - Say 'yes' if the question COULD be asked by someone interested in entrepreneurship
         - Say 'yes' if the question relates to topics that entrepreneurs or business people commonly need to know
         - Say 'yes' if the question involves economic activities, work, income, or finances
@@ -949,7 +1133,7 @@ def route_question(state):
 
         Only say 'no' if the question is CLEARLY unrelated to business, entrepreneurship, economics, work, or practical aspects of living in a country.
 
-        Here are example topics that should be considered business-related (this is NOT an exhaustive list):
+        Here are example topics that should be considered business-related:
         {business_topics}
 
         Answer ONLY with 'yes' or 'no'.
@@ -986,14 +1170,9 @@ def route_question(state):
     business_related = is_business_related(question)
     different_country = is_wrong_country(question)
     
-    # If question is about a different country, mark as unrelated
-    if different_country:
-        print(f"Question is about a different country than {country}, marking as unrelated")
-        return "unrelated"
-    
-    # If question is not business-related, mark as unrelated
-    if not business_related:
-        print(f"Question is not related to business topics, marking as unrelated")
+    # If question is about a different country or not business-related, mark as unrelated
+    if different_country or not business_related:
+        print(f"Question is {'about a different country' if different_country else 'not related to business topics'}, marking as unrelated")
         return "unrelated"
     
     # Now we know the question is business-related and not about a different country
@@ -1005,52 +1184,17 @@ def route_question(state):
     if st.session_state.selected_country == "Finland":
         if hybrid_search_enabled:
             return "hybrid_search"
-        
-        if internet_search_enabled:
+        elif internet_search_enabled:
             return "websearch"
+        else:
+            return "retrieve"  # Default to retrieve for Finland without special search options
     
-    # For Finland with document search only, use more detailed routing
-    SYS_PROMPT = f"""Act as a router to select specific tools or functions based on user's question. 
-                 - Analyze the given question and use the given tool selection dictionary to output the name of the relevant tool based on its description and relevancy with the question. 
-                   The dictionary has tool names as keys and their descriptions as values. 
-                 - Output only and only tool name, i.e., the exact key and nothing else with no explanations at all. 
-                 - For questions mentioning any other country except {country}, or any other city except a city in {country}, output 'unrelated'.
-                """
-
-    # Define the ChatPromptTemplate for detailed routing
-    prompt = ChatPromptTemplate.from_messages(
-        [
-            ("system", SYS_PROMPT),
-            ("human", """Here is the question:
-                        {question}
-                        Here is the tool selection dictionary:
-                        {tool_selection}
-                        Output the required tool.
-                    """),
-        ]
-    )
-
-    # Pass the inputs to the prompt
-    inputs = {
-        "question": question,
-        "tool_selection": tool_selection
-    }
-
-    # Invoke the chain
-    tool = (prompt | st.session_state.router_llm | StrOutputParser()).invoke(inputs)
-    # Remove backslashes and extra spaces
-    tool = re.sub(r"[\\'\"`]", "", tool.strip())
-    
-    if "unrelated" not in tool:
-        print(f"Invoking {tool} tool through {st.session_state.router_llm.model_name}")
-    if "websearch" in tool:
-        print("I need to get recent information from this query.")
-    
-    return tool
+    # Default fallback
+    return "retrieve"
 
 
 workflow = StateGraph(GraphState)
-# Add nodes
+# # Add nodes
 workflow.add_node("retrieve", retrieve)
 workflow.add_node("grade_documents", grade_documents)
 workflow.add_node("route_after_grading", route_after_grading)
