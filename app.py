@@ -1,6 +1,6 @@
-__import__('pysqlite3')
-import sys
-sys.modules['sqlite3'] = sys.modules.pop('pysqlite3')
+# __import__('pysqlite3')
+# import sys
+# sys.modules['sqlite3'] = sys.modules.pop('pysqlite3')
 import io
 import re
 import sys
@@ -54,7 +54,7 @@ Follow-up Questions:"""
         # Use ChatOpenAI as a fallback if the selected models because otherwise it will fail. e.g Gemma might not support invoking method.
         if any(model_type in st.session_state.selected_model.lower()
                for model_type in ["gemma2", "deepseek", "mixtral"]):
-            fallback_llm = ChatOpenAI(model="gpt-4o-mini", temperature=0.5)
+            fallback_llm = ChatOpenAI(model=model_default, temperature=0.5)
             response = fallback_llm.invoke(prompt)
         else:
             response = st.session_state.llm.invoke(prompt)
@@ -334,6 +334,8 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
+model_default = "gpt-4.1-2025-04-14" #for generating answer (bigger:gpt-4.1-2025-04-14)
+other_model = "gpt-4.1-2025-04-14" # for routing and grading (smaller one: gpt-4.1-mini-2025-04-14)
 # -------------------- Sidebar --------------------
 with st.sidebar:
     try:
@@ -355,11 +357,11 @@ with st.sidebar:
 
     # Set default model selections if not present.
     if "selected_model" not in st.session_state:
-        st.session_state.selected_model = "gpt-4o"
+        st.session_state.selected_model = model_default
     if "selected_routing_model" not in st.session_state:
-        st.session_state.selected_routing_model = "gpt-4o"
+        st.session_state.selected_routing_model = other_model
     if "selected_grading_model" not in st.session_state:
-        st.session_state.selected_grading_model = "gpt-4o"
+        st.session_state.selected_grading_model = other_model
     if "selected_embedding_model" not in st.session_state:
         st.session_state.selected_embedding_model = "text-embedding-3-large"
 
@@ -451,24 +453,61 @@ with st.sidebar:
     # Add manual download button header
     st.markdown("**📚 Documentation:**")
 
-    # Create download button for the manual PDF
-    try:
-        with open("manual.pdf", "rb") as pdf_file:
-            pdf_bytes = pdf_file.read()
+    # Country-specific download options
+    if st.session_state.selected_country == "Estonia":
+        # Original manual download for Estonia
+        try:
+            with open("data/Smart Guide Manual.pdf", "rb") as pdf_file:
+                pdf_bytes = pdf_file.read()
+                
+            st.download_button(
+                label="📄 Download Manual",
+                data=pdf_bytes,
+                file_name="Smart_Guide_System_Manual.pdf",
+                mime="application/pdf",
+                help="Download the complete user manual as PDF",
+                key="manual_download",
+                use_container_width=True
+            )
+        except FileNotFoundError:
+            st.error("Manual PDF not found. Please contact support.")
+        except Exception as e:
+            st.error(f"Error loading manual: {str(e)}")
+    else:  # Finland
+        # New PDF selector for Finland
+        try:
+            import os
+            pdf_files = [f for f in os.listdir("data") if f.endswith('.pdf')]
             
-        st.download_button(
-            label="📄 Download Manual",
-            data=pdf_bytes,
-            file_name="Smart_Guide_System_Manual.pdf",
-            mime="application/pdf",
-            help="Download the complete user manual as PDF",
-            key="manual_download",
-            use_container_width=True
-        )
-    except FileNotFoundError:
-        st.error("Manual PDF not found. Please contact support.")
-    except Exception as e:
-        st.error(f"Error loading manual: {str(e)}")
+            if pdf_files:
+                # Create a dropdown to select PDF file
+                selected_pdf = st.selectbox(
+                    "Select document to download:",
+                    options=pdf_files,
+                    index=0,
+                    key="pdf_selector"
+                )
+                
+                # Create download button for the selected PDF
+                with open(os.path.join("data", selected_pdf), "rb") as pdf_file:
+                    pdf_bytes = pdf_file.read()
+                    
+                st.download_button(
+                    label="📄 Download",
+                    data=pdf_bytes,
+                    file_name=selected_pdf,
+                    mime="application/pdf",
+                    help="Download the selected PDF document",
+                    key="pdf_download",
+                    use_container_width=True
+                )
+            else:
+                st.warning("No PDF documents found in the data folder.")
+        except FileNotFoundError:
+            st.error("Data folder not found. Please create a 'data' folder with PDF files.")
+        except Exception as e:
+            st.error(f"Error loading documents: {str(e)}")
+
     # Toggle for displaying generation time
     st.checkbox("Show generation time", value=True, key="show_timer")
     
@@ -486,7 +525,7 @@ with st.sidebar:
     except Exception as e:
         st.error("Error initializing model, continuing with previous model: " + str(e))
         # Initialize a fallback LLM for follow-up questions
-        st.session_state.llm = ChatOpenAI(model="gpt-4o", temperature=0.5)
+        st.session_state.llm = ChatOpenAI(model=model_default, temperature=0.5)
 
 # -------------------- Main Title & Introduction --------------------
 # flag_emoji = "🇫🇮" if st.session_state.selected_country == "Finland" else "🇪🇪"
