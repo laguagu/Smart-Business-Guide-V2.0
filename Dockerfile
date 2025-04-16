@@ -49,6 +49,9 @@ RUN mkdir -p /app/data/chroma_db_llamaparse-openai
 # Copy only the OpenAI vector store (the default one used)
 COPY data/chroma_db_llamaparse-openai/ /app/data/chroma_db_llamaparse-openai/
 
+# Copy PDF files from data directory
+COPY data/*.pdf /app/data/
+
 # Create images directory and copy only the required logo
 RUN mkdir -p /app/images
 COPY images/LOGO_UPBEAT.jpg images/estonia.jpg images/finland.png /app/images/

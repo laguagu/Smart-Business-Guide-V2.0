@@ -37,9 +37,13 @@ docker login -u unused -p $(oc whoami -t) image-registry.apps.2.rahti.csc.fi
 
 # Tag the Docker image
 docker tag smart-business-guide image-registry.apps.2.rahti.csc.fi/upbeat-apps/smart-business-guide:latest
+# NOTE! V2 for new app
+docker tag smart-business-guide image-registry.apps.2.rahti.csc.fi/upbeat-apps/smart-business-guide:v2
 
 # Push the Docker image to the Rahti registry
 docker push image-registry.apps.2.rahti.csc.fi/upbeat-apps/smart-business-guide:latest
+# NOTE! V2 for new app
+docker push image-registry.apps.2.rahti.csc.fi/upbeat-apps/smart-business-guide:v2
 ```
 
 ## 4. Create the application in Rahti management panel
