@@ -24,6 +24,7 @@ var/
 *.egg-info/
 .installed.cfg
 *.egg
+.devcontainer
 agentic_rag_with_tools.py
 chroma_debug.py
 # Exclude the Hugging Face vector store since we're only using OpenAI embeddings
