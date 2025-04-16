@@ -62,7 +62,6 @@ logging.basicConfig(level=logging.INFO)
 ###################################################
 
 # Define paths and parameters
-data_file_path = 'Becoming an entrepreneur in Finland.md'
 DATA_FOLDER = 'data'
 persist_directory_openai = 'data/chroma_db_llamaparse-openai'
 persist_directory_huggingface = 'data/chroma_db_llamaparse-huggincface'
@@ -70,6 +69,8 @@ collection_name = 'rag'
 CHUNK_SIZE = 3000
 CHUNK_OVERLAP = 200
 
+
+##suitable for gpt-4.1-2025-04-14 and gpt-4o
 finland_rag_prompt = PromptTemplate(
     template=r"""<|begin_of_text|><|start_header_id|>system<|end_header_id|>
 You are a precise, accurate assistant specializing in Finland business information. Follow these rules:
@@ -321,11 +322,11 @@ def initialize_app(model_name, selected_embedding_model, selected_routing_model,
             else:
                 # Fallback to OpenAI if no previous state
                 st.session_state.llm = ChatOpenAI(
-                    model="gpt-4o-mini", temperature=0.0, streaming=True)
+                    model="gpt-4.1-2025-04-14", temperature=0.0, streaming=True)
                 st.session_state.router_llm = ChatOpenAI(
-                    model="gpt-4o-mini", temperature=0.0)
+                    model="gpt-4.1-mini-2025-04-14", temperature=0.0)
                 st.session_state.grader_llm = ChatOpenAI(
-                    model="gpt-4o-mini", temperature=0.0)
+                    model="gpt-4.1-mini-2025-04-14", temperature=0.0)
                 
                 # Set a default RAG prompt based on country
                 if st.session_state.selected_country == "Estonia":
@@ -450,6 +451,8 @@ model_list = [
     "mixtral-8x7b-32768",
     "gemma2-9b-it",
     "gpt-4o-mini",
+    "gpt-4.1-2025-04-14",
+    "gpt-4.1-mini-2025-04-14",
     "gpt-4o",
     "deepseek-r1-distill-llama-70b"
 ]
