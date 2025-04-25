@@ -843,7 +843,7 @@ def web_search(state):
 
         search_result = st.session_state.tavily_client.get_search_context(
             query=question,
-            search_depth="basic",
+            search_depth="advanced",
             max_tokens=4000,
             max_results=10,
             include_domains=include_domains,
