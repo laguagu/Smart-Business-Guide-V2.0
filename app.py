@@ -5,7 +5,6 @@ try:
     print("Using pysqlite3 module instead of sqlite3 (Rahti compatible)")
 except ImportError:
     print("pysqlite3 not found, using standard sqlite3 module (local development)")
-    
 import io
 import re
 import sys
