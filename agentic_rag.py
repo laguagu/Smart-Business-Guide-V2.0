@@ -803,7 +803,14 @@ def web_search(state):
                 "tradewithestonia.com",
                 "kul.ee",
                 "pta.agri.ee",
-                "terviseamet.ee"
+                "terviseamet.ee",
+                "learn.e-resident.gov.ee",
+                "rik.ee",
+                "1office.co",
+                "investinestonia.com",
+                "kredex.ee",
+                "e-estonia.com",
+                "startupestonia.ee"
             ]
         else:  # Default to Finland
             include_domains = [
