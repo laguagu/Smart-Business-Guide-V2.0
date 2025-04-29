@@ -134,14 +134,14 @@ If you're new to Docker, here's a quick tutorial that explains the core concepts
 
 Below are some screenshots showing the Rahti deployment process:
 
-### Rahti Login Screen
+### Rahti Add
 
 ![Rahti Add](RAHTI-1.png)
 
-### Rahti Registry View
+### Settings
 
 ![Settings](RAHTI-2.png)
 
-### Deployment Configuration
+### Route (URL for app)
 
 ![Where to find URL?](RAHTI-3.png)
