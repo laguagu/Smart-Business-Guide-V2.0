@@ -66,6 +66,20 @@ If you see an error like `exec ./entrypoint.sh: no such file or directory`, it's
 dos2unix entrypoint.sh
 ```
 
+## Step 2.5: Ensure Rahti 2 Access and Create Project
+
+Before uploading to Rahti, you need to:
+
+1. **Ensure you have Rahti 2 access**:
+
+   - Request access through the MyCSC portal if you don't already have it
+   - Follow the instructions at: <https://docs.csc.fi/cloud/rahti/access/>
+
+2. **Create a Rahti 2 project**:
+   - Log in to the Rahti 2 web console
+   - Create a new project following the guide at: <https://docs.csc.fi/cloud/rahti/usage/projects_and_quota/#creating-a-project>
+   - Note your project name as you'll need it in the next steps
+
 ## Step 3: Upload to Rahti
 
 1. Log in to Rahti:
