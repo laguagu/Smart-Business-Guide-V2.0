@@ -53,11 +53,14 @@ Before deploying to Rahti, test your application on your computer:
 # Build your container
 docker build -t smart-business-guide:latest .
 
-# Run it with your environment variables
+# Run it with your environment variables from your .env file
+# This .env file should contain all the environment variables your app needs (API keys, etc.)
 docker run -p 8501:8501 --env-file .env smart-business-guide:latest
 ```
 
 Visit <http://localhost:8501> to check if your app works correctly.
+
+> **Note:** If you're confident that your application is configured correctly, you can skip the testing step and proceed directly to deployment.
 
 If you see an error like `exec ./entrypoint.sh: no such file or directory`, it's likely due to Windows line endings. Fix it with:
 
@@ -96,7 +99,7 @@ Before uploading to Rahti, you need to:
 
    # Tag your image with your project name
    docker tag smart-business-guide:latest image-registry.apps.2.rahti.csc.fi/your-project-name/smart-business-guide:latest
-   
+
    # NOTE: Replace "your-project-name" with the actual name of your Rahti 2 project that you created in Step 2.5
 
    # Push the image
