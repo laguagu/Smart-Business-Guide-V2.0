@@ -96,6 +96,8 @@ Before uploading to Rahti, you need to:
 
    # Tag your image with your project name
    docker tag smart-business-guide:latest image-registry.apps.2.rahti.csc.fi/your-project-name/smart-business-guide:latest
+   
+   # NOTE: Replace "your-project-name" with the actual name of your Rahti 2 project that you created in Step 2.5
 
    # Push the image
    docker push image-registry.apps.2.rahti.csc.fi/your-project-name/smart-business-guide:latest
