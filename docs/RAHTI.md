@@ -136,12 +136,12 @@ Below are some screenshots showing the Rahti deployment process:
 
 ### Rahti Login Screen
 
-![Rahti Add](docs/RAHTI-1.png)
+![Rahti Add](RAHTI-1.png)
 
 ### Rahti Registry View
 
-![Settings](docs/RAHTI-2.png)
+![Settings](RAHTI-2.png)
 
 ### Deployment Configuration
 
-![Where to find URL?](docs/RAHTI-3.png)
+![Where to find URL?](RAHTI-3.png)
