@@ -6,11 +6,8 @@ from typing import List
 import requests
 import streamlit as st
 from bs4 import BeautifulSoup
-from langchain.retrievers import ContextualCompressionRetriever
-from langchain.retrievers.document_compressors import FlashrankRerank
 from langchain_chroma import Chroma
-from langchain_community.document_loaders import (UnstructuredMarkdownLoader,
-                                                  WebBaseLoader)
+from langchain_community.document_loaders import UnstructuredMarkdownLoader
 from langchain_community.tools.tavily_search import TavilySearchResults
 from langchain_core.documents import Document
 from langchain_core.output_parsers import StrOutputParser
@@ -20,9 +17,8 @@ from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langgraph.graph import END, StateGraph
-from pydantic import BaseModel, Field
-from sentence_transformers import SentenceTransformer, util
 from openai import OpenAI
+from pydantic import BaseModel, Field
 from typing_extensions import TypedDict
 
 # Set up environment variables

@@ -1,0 +1,18 @@
+streamlit
+torch==2.7.0 --index-url https://download.pytorch.org/whl/cpu 
+tornado
+langchain_openai
+beautifulsoup4
+requests
+langchain_chroma
+langchain_community
+langchain_core
+langchain_groq
+langchain_huggingface
+langchain_text_splitters
+langgraph
+pydantic
+typing_extensions
+chromadb
+sentence-transformers
+# pysqlite3-binary

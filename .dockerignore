@@ -35,3 +35,8 @@ data/chroma_db_llamaparse-huggincface/
 *.zip
 *.tar
 *.log
+
+# Virtual environment directories
+.myenv
+venv/
+ENV/
