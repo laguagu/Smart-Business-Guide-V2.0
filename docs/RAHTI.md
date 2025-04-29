@@ -70,7 +70,7 @@ dos2unix entrypoint.sh
 
 1. Log in to Rahti:
 
-   - Go to <https://rahti.csc.fi:8443/>
+   - Go to <https://console.rahti.csc.fi/>
    - Click your username (right corner of screen) and select "Copy login command"
    - Run the command in your terminal
 
