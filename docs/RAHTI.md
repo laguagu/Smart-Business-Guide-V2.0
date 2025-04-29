@@ -119,8 +119,6 @@ Before uploading to Rahti, you need to:
    - `TAVILY_API_KEY`
    - `GROQ_API_KEY`
    - `OPENAI_API_KEY`
-   - `USERNAME`
-   - `PASSWORD`
 7. Click "Create"
 
 ## Step 5: Access Your App
