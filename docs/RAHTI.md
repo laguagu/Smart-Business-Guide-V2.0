@@ -19,7 +19,6 @@ Your application needs these key files:
 You can use the existing Dockerfile in this project, which includes optimizations for faster builds. A simpler version would also work fine.
 
 The **entrypoint.sh** script is important because it:
-
 - Creates a configuration file for Streamlit from your environment variables
 - Starts your Streamlit application correctly in the Linux environment
 
@@ -73,6 +72,8 @@ dos2unix entrypoint.sh
    - Click your username (right corner of screen) and select "Copy login command"
    - Run the command in your terminal
 
+   ![Login to Rahti](RAHTI-1.png)
+
 2. Push your image to Rahti's registry:
 
    ```bash
@@ -88,10 +89,12 @@ dos2unix entrypoint.sh
 
    > **Note:** When you push an image to Rahti, it automatically creates an image registry entry in Rahti's internal registry, similar to GitHub but for Docker images. You can also use external registries like Docker Hub if preferred.
 
+   ![Rahti Registry](RAHTI-2.png)
+
 ## Step 4: Deploy in Rahti
 
 1. In the Rahti web console, select your project
-2. Click "+Add" > "Container images"
+2. Click "+Add" > "Container images" 
 3. Enter your image name (Image stream tag from internal registry): `PROJECT/IMAGE-STREAM/TAG`
 4. Name your application (e.g., "smart-business-guide")
 5. Show advanced Deployment options
@@ -103,11 +106,15 @@ dos2unix entrypoint.sh
    - `PASSWORD`
 7. Click "Create"
 
+   ![Deploy in Rahti](RAHTI-3.png)
+
 ## Step 5: Access Your App
 
 1. Wait for deployment to complete
 2. Click the application URL shown in the Rahti dashboard
 3. Your app should now be running in Rahti!
+
+   ![Access Your App](RAHTI-4.png)
 
 ## Making Updates
 
@@ -119,28 +126,5 @@ To update your application:
 4. Update your deployment to use the new version
 
 For more information:
-
 - [CSC's Rahti documentation](https://docs.csc.fi/cloud/rahti/rahti-what-is/)
 - [Using Rahti Integrated Registry](https://docs.csc.fi/cloud/rahti/images/Using_Rahti_integrated_registry/)
-
-## Quick Docker Reference
-
-If you're new to Docker, here's a quick tutorial that explains the core concepts in just 100 seconds:
-
-- [Docker Tutorial in 100 Seconds](https://www.youtube.com/watch?v=Gjnup-PuquQ)
-
-## Screenshots
-
-Below are some screenshots showing the Rahti deployment process:
-
-### Rahti Login Screen
-
-![Rahti Add](docs/RAHTI-1.png)
-
-### Rahti Registry View
-
-![Settings](docs/RAHTI-2.png)
-
-### Deployment Configuration
-
-![Where to find URL?](docs/RAHTI-3.png)

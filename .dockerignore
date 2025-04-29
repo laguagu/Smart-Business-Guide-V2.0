@@ -40,3 +40,5 @@ data/chroma_db_llamaparse-huggincface/
 .myenv
 venv/
 ENV/
+
+docs/
