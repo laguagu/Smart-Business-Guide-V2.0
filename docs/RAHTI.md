@@ -71,7 +71,7 @@ dos2unix entrypoint.sh
 1. Log in to Rahti:
 
    - Go to <https://console.rahti.csc.fi/>
-   - Click your username (right corner of screen) and select "Copy login command"
+   - Click your username (right top corner of screen) and select "Copy login command"
    - Run the command in your terminal
 
 2. Push your image to Rahti's registry:
