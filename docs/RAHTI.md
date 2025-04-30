@@ -8,6 +8,7 @@ This guide helps you deploy your Smart Business Guide (or any Streamlit applicat
 - Your application code (ready to run)
 - API keys and other environment variables your app needs
 - Docker Desktop installed on your computer (https://www.docker.com/get-started/)
+- OpenShift CLI (oc) installed on your computer (https://docs.csc.fi/cloud/rahti/usage/cli/)
 
 ## Step 1: Prepare Your Files
 
@@ -32,7 +33,7 @@ Normally, a Python Dockerfile can be very simple, like this:
 ```dockerfile
 FROM python:3.11-slim
 WORKDIR /app
-COPY requirements.txt ./
+COPY requirements.txt ./ 
 RUN pip install -r requirements.txt
 COPY . .
 CMD ["python", "app.py"]
